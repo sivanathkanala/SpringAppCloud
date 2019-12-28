@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+
+<title>AngularJS</title>
+ <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script> 
+
+
+
+<script type="text/javascript">
+var app = angular.module("AgentDataManagement", []);
+//Controller Part
+app.controller("AgentController", function($scope, $http) {
+ 
+    $scope.agents = [];
+    $scope.agentForm = {
+        agentId: 1,
+        agentName: "",
+        agentSalary: ""
+};
+
+$scope.getAgentData = function()
+{	
+	var method = "";
+	var url = "";
+
+if($scope.agentForm.agentId != 0)
+	{
+	method ="POST";
+	url = "/getAgent";
+	}
+	
+	$http(
+	{
+		method : method,
+		url : url,
+		data: angular.toJson($scope.agentForm),
+		headers:{
+		'Content-Type' : 'application/json'
+	}
+	}).then(function(res)
+			{ //success
+			 $scope.agents = res.data;
+			$http.reload();
+			}, function(res)
+			{ //error
+				console.log("Error "+ res.status  + ":" + res.data);
+			})
+};
+})
+
+</script>
+
+</head>
+<body data-ng-app="AgentDataManagement" data-ng-controller="AgentController">
+      <h3>
+         CRUD: Spring Boot + Rest + AngularJS
+      </h3>
+
+
+<table>
+<tr>
+           
+                <th>Agent Id</th>
+                <th>Agent name</th>
+                <th>Agent Salary</th>
+               
+</tr>
+ 
+<tr ng-repeat="agent in agents">
+               
+<td> 
+{{ agent.agentId }}
+</td>
+<td> 
+ {{ agent.agentName }}
+</td>
+<td> 
+{{ agent.agentSalary }}
+</td>
+</tr>
+</table >
+
+      
+<form data-ng-submit="getAgentData()">
+		         
+		<table border="0">
+	<tr>
+	<td>Agent Id</td>
+				<td><input type="text" data-ng-model="agentForm.agentId" /></td>
+			</tr>
+			<tr>
+				<td colspan="2">                  <input type="submit"
+					value="Submit" class="blue-button" />                
+				</td>             
+			</tr>
+			         
+		</table>
+		      
+	</form>
+	      <br/>
+
+
+</body>
+</html>
